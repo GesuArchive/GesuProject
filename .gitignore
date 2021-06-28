@@ -1,5 +1,13 @@
 
-#
+
+## Visual Studio Code
+#!.vscode/settings.json
+.history
+.vscode/*
+*.code-workspace
+
+##
+.netrwhist
 *.backup
 *.before
 *.classpath
@@ -17,4 +25,7 @@
 *.settings
 *.svn
 */CVS
+*~
+build_log.txt
+tags
 Thumbs.db
