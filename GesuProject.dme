@@ -14,5 +14,5 @@
 
 // BEGIN_INCLUDE
 #include "GesuProject.dm"
+#include "skin.dmf"
 // END_INCLUDE
-
