@@ -39,6 +39,10 @@ macro "macro"
 
 menu "menu"
 	elem 
+		name = "&File"
+		command = ""
+		saved-params = "is-checked"
+	elem 
 		name = "&Options and Messages...\tF1"
 		command = ".options"
 		category = "&File"
@@ -54,9 +58,28 @@ menu "menu"
 		category = "&File"
 		saved-params = "is-checked"
 	elem 
+		name = ""
+		command = ""
+		category = "&File"
+		saved-params = "is-checked"
+	elem 
+		name = "&Check ping"
+		command = ".ping"
+		category = "&File"
+		saved-params = "is-checked"
+	elem 
+		name = "&Reconnect"
+		command = ".reconnect"
+		category = "&File"
+		saved-params = "is-checked"
+	elem 
 		name = "&Quit"
 		command = ".quit"
 		category = "&File"
+		saved-params = "is-checked"
+	elem 
+		name = "&Icons"
+		command = ""
 		saved-params = "is-checked"
 	elem "stretch"
 		name = "&Stretch to fit"
@@ -90,7 +113,7 @@ menu "menu"
 		command = ".winset \"menu.textmode.is-checked=true?mapwindow.map.text-mode=true:mapwindow.map.text-mode=false\""
 		category = "&Icons"
 		can-check = true
-		saved-params = ""
+		saved-params = "is-checked"
 
 
 window "mainwindow"
