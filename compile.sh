@@ -8,6 +8,11 @@
 	#echo "Script executed from: $(pwd)";
 };
 
+# COMPULE
+{
+	dm -l -verbose GesuProject.dme
+};
+
 
 # END
 {
