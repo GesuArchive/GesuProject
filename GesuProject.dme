@@ -13,6 +13,6 @@
 // END_PREFERENCES
 
 // BEGIN_INCLUDE
-#include "GesuProject.dm"
-#include "skin.dmf"
+#include "client\skin.dmf"
+#include "server\GesuProject.dm"
 // END_INCLUDE
