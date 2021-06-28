@@ -1,0 +1,18 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build DM Environment file",
+			"type": "dreammaker",
+			"dme": "GesuProject.dme",
+			"problemMatcher": ["$dreammaker"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"clear": true // Controls whether the terminal is cleared before this task is run.
+			}
+		}
+	]
+}

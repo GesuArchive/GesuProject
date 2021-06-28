@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+		"andreabbondanza.ignoregit",
+		"eamodio.gitlens",
+		"editorconfig.editorconfig",
+		"jasonnutter.vscode-codeowners",
+		"oderwat.indent-rainbow",
+		"shan.code-settings-sync",
+		"ss13.byond",
+		"wwm.better-align"
+	]
+}
