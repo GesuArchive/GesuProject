@@ -1,12 +1,26 @@
 #!/usr/bin/env python3
 
-import sys, json, time, os
-
+import sys, json, time, os, platform
 from urllib.request import Request, urlopen, urlretrieve, build_opener, install_opener
-from datetime import date
+#from datetime import date
 
 
 os.system('cls' if os.name=='nt' else 'clear')
+
+script_os = platform.system()
+script_os_supported = ['Linux', 'Windows']
+
+
+print('Script started (OS: ' + script_os + ')')
+
+if not script_os in script_os_supported:
+	print(' > FATAL ERROR! THIS OS IS SUPPORTED (supported: ' + str(script_os_supported) + '). < ')
+	sys.exit(1)
+
+opener = build_opener()
+opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+install_opener(opener)
+
 
 print('Getting BYOND version from cashe...')
 
@@ -32,7 +46,7 @@ if True:
 	# Real getting
 	print('Getting BYOND version from website...')
 	try:
-		req = Request('http://www.byond.com/download/version.txt', headers = {'User-Agent': 'Mozilla/5.0'})
+		req = Request('http://www.byond.com/download/version.txt') #, headers = {'User-Agent': 'Mozilla/5.0'})
 		data_from_website_raw = urlopen(req, timeout = 10).read().decode('utf-8').split('\n')
 		print('Success!')
 	except:
@@ -98,18 +112,17 @@ print(json.dumps(BYOND_vers)) #, indent = 4))
 
 print('Getting BYOND itself from website...')
 
-print('Downloading: %s.%s_byond_linux.zip' % (BYOND_vers["BYOND versions"]["Stable"]["Major"], BYOND_vers["BYOND versions"]["Stable"]["Minor"]))
+target_file = '%s.%s_byond_linux.zip' % (BYOND_vers["BYOND versions"]["Stable"]["Major"], BYOND_vers["BYOND versions"]["Stable"]["Minor"])
+
+print('Downloading: "' + target_file +'"')
 
 try:
 	# http://www.byond.com/download/build/${MAJOR_VERSION}/${VERSION}_byond_linux.zip
 	# http://www.byond.com/download/build/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip
 	# http://www.byond.com/download/build/LATEST/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip
-	opener = build_opener()
-	opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-	install_opener(opener)
 	urlretrieve(
-		'http://www.byond.com/download/build/LATEST/%s.%s_byond_linux.zip' % (BYOND_vers["BYOND versions"]["Stable"]["Major"], BYOND_vers["BYOND versions"]["Stable"]["Minor"]),
-		'%s.%s_byond_linux.zip' % (BYOND_vers["BYOND versions"]["Stable"]["Major"], BYOND_vers["BYOND versions"]["Stable"]["Minor"])
+		'http://www.byond.com/download/build/LATEST/',
+		target_file
 	)
 	print('Success!')
 except:
