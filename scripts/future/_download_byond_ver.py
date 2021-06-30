@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-import sys, json, time, os.path
+import sys, json, time, os
 
-from urllib.request import Request, urlopen
+from urllib.request import Request, urlopen, urlretrieve, build_opener, install_opener
 from datetime import date
 
+
+os.system('cls' if os.name=='nt' else 'clear')
 
 print('Getting BYOND version from cashe...')
 
@@ -26,34 +28,33 @@ else:
 	print('There is no cashe.')
 	data_from_cashe = False
 
-# http://www.byond.com/download/build/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip
 if True:
 	# Real getting
 	print('Getting BYOND version from website...')
 	try:
 		req = Request('http://www.byond.com/download/version.txt', headers = {'User-Agent': 'Mozilla/5.0'})
-		data_from_website = urlopen(req, timeout = 10).read().decode('utf-8').split('\n')
+		data_from_website_raw = urlopen(req, timeout = 10).read().decode('utf-8').split('\n')
 		print('Success!')
 	except:
 		print('Can not get latest version from BYOND website. Possiable reason: website or internet connection is down.')
-		data_from_website = False
+		data_from_website_raw = False
 else:
 	# Emulating for not "DOS-attacking" byond.com
 	print('Getting BYOND version from website... (emulating)')
-	data_from_website = '513.1542\n514.1557'.split('\n')
+	data_from_website_raw = '513.1542\n514.1557'.split('\n')
 	time.sleep(2)
 
 
-if data_from_website != False:
+if data_from_website_raw != False:
 
 	versions_processed = []
-	for str in data_from_website:
+	for str in data_from_website_raw:
 		versions_processed.append(str.split('.'))
-	del str, data_from_website
+	del str, data_from_website_raw
 
 	#print(json.dumps([1,2,3,{'4': 5, '6': 7}], separators=(',', ':')))
 
-	BYOND_vers_online = {
+	data_from_website = {
 		'BYOND versions': {
 			'Stable': {
 				'Major': int(versions_processed[0][0]),
@@ -68,28 +69,52 @@ if data_from_website != False:
 	del versions_processed
 
 	if data_from_cashe != False:
-		for x_values, y_values in zip(BYOND_vers_online.items(), data_from_cashe.items()):
+		for x_values, y_values in zip(data_from_website.items(), data_from_cashe.items()):
 			if x_values == y_values:
 				print('Cashed version of BYOND is unchanged, passing.')
+				BYOND_vers = data_from_cashe
 			else:
 				print('Cashed version of BYOND is changed, updating.')
 				with open('byond_ver_cashed.json', 'w') as fp:
-					json.dump(BYOND_vers_online, fp, indent = 4)
+					json.dump(data_from_website, fp, indent = 4)
+				BYOND_vers = data_from_website
 	else:
 		print('Website version of BYOND is only avaliable, cashing.')
 		with open('byond_ver_cashed.json', 'w') as fp:
-			json.dump(BYOND_vers_online, fp, indent = 4)
+			json.dump(data_from_website, fp, indent = 4)
+		BYOND_vers = data_from_website
 
-	print('BYOND versions:')
-	print(json.dumps(BYOND_vers_online)) #, indent = 4))
-
-elif data_from_website != False:
+elif data_from_website_raw != False:
 	print('Cashed version of BYOND is only avaliable.')
-	print('BYOND versions:')
-	print(json.dumps(data_from_cashe)) #, indent = 4))
+	BYOND_vers = data_from_cashe
 
 else:
 	print(' > FATAL ERROR! NO CASH FILE EXISTS AND NO CONNECTION ESTABLISHED TO WEBSITE. < ')
+	sys.exit(1)
+
+
+print('BYOND versions:')
+print(json.dumps(BYOND_vers)) #, indent = 4))
+
+print('Getting BYOND itself from website...')
+
+print('Downloading: %s.%s_byond_linux.zip' % (BYOND_vers["BYOND versions"]["Stable"]["Major"], BYOND_vers["BYOND versions"]["Stable"]["Minor"]))
+
+try:
+	# http://www.byond.com/download/build/${MAJOR_VERSION}/${VERSION}_byond_linux.zip
+	# http://www.byond.com/download/build/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip
+	# http://www.byond.com/download/build/LATEST/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip
+	opener = build_opener()
+	opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+	install_opener(opener)
+	urlretrieve(
+		'http://www.byond.com/download/build/LATEST/%s.%s_byond_linux.zip' % (BYOND_vers["BYOND versions"]["Stable"]["Major"], BYOND_vers["BYOND versions"]["Stable"]["Minor"]),
+		'%s.%s_byond_linux.zip' % (BYOND_vers["BYOND versions"]["Stable"]["Major"], BYOND_vers["BYOND versions"]["Stable"]["Minor"])
+	)
+	print('Success!')
+except:
+	print('Can not get latest version from BYOND website. Possiable reason: website or internet connection is down.')
+	print(' > FATAL ERROR! NO CONNECTION ESTABLISHED TO WEBSITE, CANN\'NT DOWNLOAD BYOND LAUNCHER. < ')
 	sys.exit(1)
 
 sys.exit(0)
