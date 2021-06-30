@@ -36,7 +36,11 @@ jobs:
           echo test, and deploy your project.
 
       #
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      #
       - name: Run Tests
-        env:
-          TEST: CODE
         run: "scripts/hello_world.py"
