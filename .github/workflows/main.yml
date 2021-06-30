@@ -44,13 +44,11 @@ jobs:
       #
       - name: Run Tests
         shell: bash
-        env:
-          target_file_path: ${{github.workspace}}${{'\scripts'}}
         run: |
           echo "Workflow step executed from > $(pwd)";
           ls -al
-          cd "./scripts/"
-          chmod 777 "scripts/hello_world.py"
-          chmod +x "scripts/hello_world.py"
+          cd "${{github.workspace}}/scripts/"
+          chmod 777 "hello_world.py"
+          chmod +x "hello_world.py"
           echo "----------------------------------------"
-          python "scripts/hello_world.py"
+          python "hello_world.py"
