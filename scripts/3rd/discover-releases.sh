@@ -23,6 +23,9 @@ echo "Stable version is ${STABLE_VERSION}"
 process_release /data/stable ${STABLE_VERSION}
 EXIT=$(($?|${EXIT}))
 
+# https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+#  Rus: https://www.opennet.ru/docs/RUS/bash_scripting_guide/x4462.html
+#       https://www.opennet.ru/docs/RUS/bash_scripting_guide/x2565.html
 if [ "${#VERSIONS[@]}" -gt "1" ]; then
 	echo "Beta version is ${BETA_VERSION}"
 	process_release /data/beta ${BETA_VERSION}
