@@ -7,12 +7,14 @@
 
 // BEGIN_FILE_DIR
 #define FILE_DIR .
+#define FILE_DIR ".github"
+#define FILE_DIR ".github/static"
 // END_FILE_DIR
 
 // BEGIN_PREFERENCES
 // END_PREFERENCES
 
 // BEGIN_INCLUDE
-#include "client\skin.dmf"
-#include "server\GesuProject.dm"
+#include "cfg\skin.dmf"
+#include "cfg\stub.dm"
 // END_INCLUDE
