@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 
-import sys, json, time, os, platform
+import json, os, platform, sys, time, zipfile
 from urllib.request import Request, urlopen, urlretrieve, build_opener, install_opener
 #from datetime import date
 
 
 os.system('cls' if os.name=='nt' else 'clear')
+print('----------------------------------------')
+
+os.system("python3 --version")
 
 script_os = platform.system()
-script_os_supported = ['Linux', 'Windows']
+script_os_supported = ['Linux'] #, 'Windows']
 
 
 print('Script started (OS: ' + script_os + ')')
@@ -17,12 +20,17 @@ if not script_os in script_os_supported:
 	print(' > FATAL ERROR! THIS OS IS SUPPORTED (supported: ' + str(script_os_supported) + '). < ')
 	sys.exit(1)
 
+print('\nInstalling dependencies...')
+os.system('sudo apt update && sudo apt dist-upgrade -y && sudo apt autoremove -y')
+os.system('sudo dpkg --add-architecture i386')
+os.system('sudo apt update && sudo apt install git language-pack-ru libc6:i386 libncurses5:i386 libssl-dev:i386 libstdc++6:i386 make build-essential mariadb-server python3 screen unzip zlib1g:i386 -y')
+
 opener = build_opener()
 opener.addheaders = [('User-agent', 'Mozilla/5.0')]
 install_opener(opener)
 
 
-print('Getting BYOND version from cashe...')
+print('\nGetting BYOND version from cashe...')
 
 if os.path.isfile('byond_ver_cashed.json'):
 	f = open('byond_ver_cashed.json', 'r')
@@ -44,7 +52,7 @@ else:
 
 if True:
 	# Real getting
-	print('Getting BYOND version from website...')
+	print('\nGetting BYOND version from website...')
 	try:
 		req = Request('http://www.byond.com/download/version.txt') #, headers = {'User-Agent': 'Mozilla/5.0'})
 		data_from_website_raw = urlopen(req, timeout = 10).read().decode('utf-8').split('\n')
@@ -85,21 +93,21 @@ if data_from_website_raw != False:
 	if data_from_cashe != False:
 		for x_values, y_values in zip(data_from_website.items(), data_from_cashe.items()):
 			if x_values == y_values:
-				print('Cashed version of BYOND is unchanged, passing.')
+				print('\nCashed version of BYOND is unchanged, passing.')
 				BYOND_vers = data_from_cashe
 			else:
-				print('Cashed version of BYOND is changed, updating.')
+				print('\nCashed version of BYOND is changed, updating.')
 				with open('byond_ver_cashed.json', 'w') as fp:
 					json.dump(data_from_website, fp, indent = 4)
 				BYOND_vers = data_from_website
 	else:
-		print('Website version of BYOND is only avaliable, cashing.')
+		print('\nWebsite version of BYOND is only avaliable, cashing.')
 		with open('byond_ver_cashed.json', 'w') as fp:
 			json.dump(data_from_website, fp, indent = 4)
 		BYOND_vers = data_from_website
 
 elif data_from_website_raw != False:
-	print('Cashed version of BYOND is only avaliable.')
+	print('\nCashed version of BYOND is only avaliable.')
 	BYOND_vers = data_from_cashe
 
 else:
@@ -110,24 +118,69 @@ else:
 print('BYOND versions:')
 print(json.dumps(BYOND_vers)) #, indent = 4))
 
-print('Getting BYOND itself from website...')
+print('\nGetting BYOND itself from website...')
 
 target_file = '%s.%s_byond_linux.zip' % (BYOND_vers["BYOND versions"]["Stable"]["Major"], BYOND_vers["BYOND versions"]["Stable"]["Minor"])
 
-print('Downloading: "' + target_file +'"')
+print('\nDownloading: "' + target_file +'"')
 
 try:
 	# http://www.byond.com/download/build/${MAJOR_VERSION}/${VERSION}_byond_linux.zip
 	# http://www.byond.com/download/build/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip
 	# http://www.byond.com/download/build/LATEST/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip
-	urlretrieve(
-		'http://www.byond.com/download/build/LATEST/',
-		target_file
-	)
+	urlretrieve('http://www.byond.com/download/build/LATEST/%s' % (target_file), target_file)
 	print('Success!')
 except:
 	print('Can not get latest version from BYOND website. Possiable reason: website or internet connection is down.')
 	print(' > FATAL ERROR! NO CONNECTION ESTABLISHED TO WEBSITE, CANN\'NT DOWNLOAD BYOND LAUNCHER. < ')
 	sys.exit(1)
 
+print('\nExtracting: "' + target_file +'"')
+try:
+	with zipfile.ZipFile(target_file, 'r') as zip_ref:
+		zip_ref.extractall('./')
+	del zip_ref
+	print('Success!')
+except Exception as ex:
+	print('Error: %s' % (ex))
+
+
+print('\nChanging catalog...')
+os.chdir('./byond/')
+
+#  date 091101102005, Zoneinfo
+print('\nFixing time for "make" command...')
+os.system('touch Makefile')
+os.system('find . -exec touch {} \;')
+os.system('find /usr/src/linux -type f -exec touch \'{}\' \';\'')
+
+
+print('\nMaking BYOND...')
+os.system('sudo make install')
+
+print('\nChmodding man file...')
+os.system('chmod 644 /usr/local/byond/man/man6/')
+
+print('\nTesting...')
+os.system('DreamDaemon')
+
+print('\nDeleting unnecessary packages...')
+os.system('apt-get purge -y --auto-remove unzip make') # curl
+
+print('\nChanging catalog...')
+os.chdir('./../')
+
+print('\nDeleting unnecessary archives...')
+os.remove('./' + target_file)
+
+
+#home_dir = os.system("cd ~")
+#print("`cd ~` ran with exit code %d" % home_dir) # 0
+#unknown_dir = os.system("cd doesnotexist")
+#print("`cd doesnotexis` ran with exit code %d" % unknown_dir) # 512
+
+# which DreamDaemon
+# "/usr/local/bin/DreamDaemon"
+
+print('----------------------------------------')
 sys.exit(0)
