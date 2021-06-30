@@ -34,3 +34,9 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+
+      #
+      - name: Run Tests
+        env:
+          TEST: CODE
+        run: "scripts/hello_world.py"
