@@ -44,6 +44,7 @@ jobs:
       #
       - name: Run Tests
         run: |
+        ls -al
         chmod 777 "scripts/hello_world.py"
         chmod +x "scripts/hello_world.py"
-        "scripts/hello_world.py"
+        python "scripts/hello_world.py"
