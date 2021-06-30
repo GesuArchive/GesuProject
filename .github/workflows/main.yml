@@ -29,4 +29,4 @@ jobs:
           echo "Workflow step executed from > $(pwd)";
           cd "${{github.workspace}}/scripts/";
           echo "----------------------------------------";
-          python "hello_world.py";
+          python "_compile.py";

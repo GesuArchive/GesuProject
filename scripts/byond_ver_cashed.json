@@ -1,0 +1,12 @@
+{
+    "BYOND versions": {
+        "Stable": {
+            "Major": 513,
+            "Minor": 1542
+        },
+        "Beta": {
+            "Major": 514,
+            "Minor": 1557
+        }
+    }
+}
