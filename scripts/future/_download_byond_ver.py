@@ -23,7 +23,17 @@ if not script_os in script_os_supported:
 print('\nInstalling dependencies...')
 os.system('sudo apt update && sudo apt dist-upgrade -y && sudo apt autoremove -y')
 os.system('sudo dpkg --add-architecture i386')
-os.system('sudo apt update && sudo apt install git language-pack-ru libc6:i386 libncurses5:i386 libssl-dev:i386 libstdc++6:i386 make build-essential mariadb-server python3 screen unzip zlib1g:i386 -y')
+
+# Trying to fix: The repository 'http://ppa.launchpad.net/chris-lea/node.js/ubuntu focal Release' does not have a Release file.
+os.system('sudo add-apt-repository -y -r ppa:chris-lea/node.js')
+os.system('curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -')
+os.system('curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add -')
+
+os.system('sudo apt update')
+os.system('sudo apt install -y build-essential') # for make
+os.system('sudo apt install -y g++ gcc make') # for nodejs
+os.system('sudo apt install -y git language-pack-ru mariadb-server nodejs python3 screen unzip')
+os.system('sudo apt install -y libc6:i386 libncurses5:i386 libssl-dev:i386 libstdc++6:i386 zlib1g:i386') # libs
 
 opener = build_opener()
 opener.addheaders = [('User-agent', 'Mozilla/5.0')]
@@ -165,7 +175,8 @@ print('\nTesting...')
 os.system('DreamDaemon')
 
 print('\nDeleting unnecessary packages...')
-os.system('apt-get purge -y --auto-remove unzip make') # curl
+os.system('sudo apt autoremove && sudo apt-get autoclean') # curl
+#os.system('apt purge -y --auto-remove unzip make') # curl
 
 print('\nChanging catalog...')
 os.chdir('./../')
